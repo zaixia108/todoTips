@@ -5,7 +5,7 @@ ReminderManager - 提醒管理器
 """
 
 from datetime import datetime
-from PySide2.QtCore import QTimer, QObject, Signal
+from PySide6.QtCore import QTimer, QObject, Signal
 
 
 class ReminderManager(QObject):

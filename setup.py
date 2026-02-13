@@ -41,7 +41,7 @@ setup(
     ],
     python_requires='>=3.6',
     install_requires=[
-        'PySide2>=5.15.0',
+        'PySide6>=6.0.0',
         'keyboard>=0.13.5',
         'pyperclip>=1.8.2',
     ],

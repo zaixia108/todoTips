@@ -4,14 +4,14 @@
 MainWindow - 主窗口
 """
 
-from PySide2.QtWidgets import (
+from PySide6.QtWidgets import (
     QMainWindow, QWidget, QVBoxLayout, QHBoxLayout, QPushButton,
     QTabWidget, QListWidget, QListWidgetItem, QDialog, QLabel,
     QLineEdit, QTextEdit, QComboBox, QCheckBox, QFileDialog,
-    QMessageBox, QMenu, QAction
+    QMessageBox, QMenu
 )
-from PySide2.QtCore import Qt, QSize
-from PySide2.QtGui import QFont
+from PySide6.QtCore import Qt, QSize
+from PySide6.QtGui import QFont, QAction
 from datetime import datetime
 import json
 

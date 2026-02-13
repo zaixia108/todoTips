@@ -6,14 +6,13 @@ TodoTips - 快速待办事项管理工具
 
 import sys
 import os
-from PySide2.QtWidgets import QApplication
-from PySide2.QtCore import Qt
+from PySide6.QtWidgets import QApplication
+from PySide6.QtCore import Qt
 from todo_app import TodoApplication
 
 def main():
     # 设置高DPI缩放
-    QApplication.setAttribute(Qt.AA_EnableHighDpiScaling, True)
-    QApplication.setAttribute(Qt.AA_UseHighDpiPixmaps, True)
+    QApplication.setHighDpiScaleFactorRoundingPolicy(Qt.HighDpiScaleFactorRoundingPolicy.PassThrough)
     
     app = QApplication(sys.argv)
     app.setQuitOnLastWindowClosed(False)
@@ -24,7 +23,7 @@ def main():
     
     todo_app = TodoApplication()
     
-    sys.exit(app.exec_())
+    sys.exit(app.exec())
 
 if __name__ == '__main__':
     main()

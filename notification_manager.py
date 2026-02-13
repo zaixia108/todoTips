@@ -6,8 +6,8 @@ NotificationManager - 通知管理器
 
 import os
 import sys
-from PySide2.QtWidgets import QSystemTrayIcon
-from PySide2.QtCore import QObject
+from PySide6.QtWidgets import QSystemTrayIcon
+from PySide6.QtCore import QObject
 
 
 class NotificationManager(QObject):

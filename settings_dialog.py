@@ -4,12 +4,12 @@
 SettingsDialog - 设置对话框
 """
 
-from PySide2.QtWidgets import (
+from PySide6.QtWidgets import (
     QDialog, QVBoxLayout, QHBoxLayout, QLabel,
     QLineEdit, QPushButton, QGroupBox, QCheckBox,
     QMessageBox
 )
-from PySide2.QtCore import QSettings
+from PySide6.QtCore import QSettings
 
 
 class SettingsDialog(QDialog):

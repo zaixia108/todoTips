@@ -8,9 +8,9 @@ import os
 import sys
 import json
 from datetime import datetime, timedelta
-from PySide2.QtWidgets import (QSystemTrayIcon, QMenu, QAction, QMessageBox)
-from PySide2.QtCore import QTimer, QThread, Signal, QSettings
-from PySide2.QtGui import QIcon
+from PySide6.QtWidgets import (QSystemTrayIcon, QMenu, QMessageBox)
+from PySide6.QtCore import QTimer, QThread, Signal, QSettings
+from PySide6.QtGui import QIcon, QAction
 import pyperclip
 import keyboard
 

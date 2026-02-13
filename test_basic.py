@@ -154,17 +154,17 @@ def test_dependencies():
             print(f"  ✗ {display_name} 未安装")
             all_ok = False
     
-    # 测试PySide2 (但不实际导入，避免在无显示环境崩溃)
+    # 测试PySide6 (但不实际导入，避免在无显示环境崩溃)
     try:
         import importlib.util
-        spec = importlib.util.find_spec('PySide2')
+        spec = importlib.util.find_spec('PySide6')
         if spec is not None:
-            print(f"  ✓ PySide2 已安装")
+            print(f"  ✓ PySide6 已安装")
         else:
-            print(f"  ✗ PySide2 未安装")
+            print(f"  ✗ PySide6 未安装")
             all_ok = False
     except Exception as e:
-        print(f"  ✗ PySide2 检查失败: {e}")
+        print(f"  ✗ PySide6 检查失败: {e}")
         all_ok = False
     
     # keyboard可能需要root权限, 标记为可选
