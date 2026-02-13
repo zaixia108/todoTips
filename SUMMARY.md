@@ -2,7 +2,7 @@
 
 ## 项目概述
 
-TodoTips 是一个使用 Python 和 PySide2 开发的现代化待办事项管理工具，专为快速记录和管理日常任务设计。
+TodoTips 是一个使用 Python 和 PySide6 开发的现代化待办事项管理工具，专为快速记录和管理日常任务设计。
 
 ## 完成的功能
 
@@ -64,7 +64,7 @@ todo_app.py (主应用逻辑)
 
 ### 关键技术
 
-1. **PySide2 (Qt)**
+1. **PySide6 (Qt)**
    - 跨平台GUI框架
    - 系统托盘集成
    - 定时器和信号槽机制
@@ -186,7 +186,7 @@ Todo = {
 
 - **操作系统**: Windows 7+, macOS 10.12+, Linux (任何现代发行版)
 - **Python**: 3.6 或更高版本
-- **依赖**: PySide2, pyperclip, keyboard (可选)
+- **依赖**: PySide6, pyperclip, keyboard (可选)
 
 ## 已知限制
 
@@ -222,7 +222,7 @@ TodoTips 已成功实现所有需求的功能：
 
 ✅ 3个基本功能全部完成
 ✅ 4个附加功能全部完成
-✅ 使用PySide2开发
+✅ 使用PySide6开发
 ✅ 界面简洁现代化
 ✅ 通过安全检查
 ✅ 文档齐全

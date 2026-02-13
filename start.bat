@@ -13,7 +13,7 @@ if errorlevel 1 (
 
 REM 检查依赖
 echo 检查依赖...
-python -c "import PySide2" >nul 2>&1
+python -c "import PySide6" >nul 2>&1
 if errorlevel 1 (
     echo 未安装依赖，正在安装...
     pip install -r requirements.txt

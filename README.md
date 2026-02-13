@@ -1,6 +1,6 @@
 # TodoTips - 快速待办事项管理工具
 
-一个使用 PySide2 开发的现代化待办事项管理工具，支持快捷键快速添加、系统通知提醒、后台运行等功能。
+一个使用 PySide6 开发的现代化待办事项管理工具，支持快捷键快速添加、系统通知提醒、后台运行等功能。
 
 ## 功能特性
 
@@ -53,7 +53,7 @@ pip install -r requirements.txt
 ```
 
 依赖包包括：
-- PySide2: Qt图形界面框架
+- PySide6: Qt图形界面框架
 - keyboard: 全局快捷键支持
 - pyperclip: 剪贴板操作
 - playsound: 音效播放
@@ -174,7 +174,7 @@ sudo python main.py
 
 ## 技术栈
 
-- **UI框架**: PySide2 (Qt for Python)
+- **UI框架**: PySide6 (Qt for Python)
 - **快捷键**: keyboard库
 - **剪贴板**: pyperclip
 - **通知**: 系统原生通知API

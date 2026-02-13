@@ -11,7 +11,7 @@ fi
 
 # 检查依赖
 echo "检查依赖..."
-python3 -c "import PySide2" 2>/dev/null
+python3 -c "import PySide6" 2>/dev/null
 if [ $? -ne 0 ]; then
     echo "未安装依赖，正在安装..."
     pip3 install -r requirements.txt

@@ -19,7 +19,7 @@ class NotificationManager(QObject):
     
     def show_notification(self, title, message, play_sound=False):
         """显示系统通知"""
-        # 使用系统通知 - 优先使用跨平台的PySide2方式
+        # 使用系统通知 - 优先使用跨平台的PySide6方式
         try:
             # 尝试使用系统托盘图标显示通知（最可靠的跨平台方式）
             if hasattr(self, 'tray_icon') and self.tray_icon:
