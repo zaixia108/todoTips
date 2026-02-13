@@ -9,18 +9,86 @@ client = Ark(
     api_key='e4c8d350-ce4d-46e9-9396-8a1a1dcdbb7a',
 )
 
+# 常量定义
+CATEGORY_DISPLAY_NAMES = {
+    "today": "本日",
+    "week": "本周",
+    "month": "本月"
+}
+MAX_DESC_PREVIEW_LENGTH = 30
 
-def summarize_text(text):
+
+def summarize_todos(todos_data):
+    """
+    使用LLM对待办事项进行智能汇总
+    
+    Args:
+        todos_data: 包含待办事项信息的字典
+    
+    Returns:
+        str: AI生成的汇总文本
+    
+    Raises:
+        ValueError: 当LLM返回无效响应时
+    """
+    # 构建用于汇总的文本
+    summary_parts = []
+    
+    # 汇总各个类别的待办事项
+    for category_name, category_data in todos_data.items():
+        category_display = CATEGORY_DISPLAY_NAMES.get(category_name, category_name)
+        total = category_data.get('total', 0)
+        completed = category_data.get('completed', 0)
+        pending = total - completed
+        
+        summary_parts.append(f"\n【{category_display}待办】")
+        summary_parts.append(f"总计: {total}项, 已完成: {completed}项, 待完成: {pending}项")
+        
+        todos = category_data.get('todos', [])
+        if todos:
+            summary_parts.append("待办事项列表:")
+            for i, todo in enumerate(todos, 1):
+                status = "✓" if todo.get('completed', False) else "○"
+                title = todo.get('title', '无标题')
+                desc = todo.get('description', '')
+                if desc and len(desc) > MAX_DESC_PREVIEW_LENGTH:
+                    desc_preview = f" - {desc[:MAX_DESC_PREVIEW_LENGTH]}..."
+                elif desc:
+                    desc_preview = f" - {desc}"
+                else:
+                    desc_preview = ""
+                summary_parts.append(f"  {status} {title}{desc_preview}")
+    
+    full_text = "\n".join(summary_parts)
+    
+    # 使用LLM进行智能汇总
+    prompt = f"""请作为一个专业的待办事项助手，对以下待办事项进行智能汇总分析。
+
+待办事项数据：
+{full_text}
+
+请提供：
+1. 整体概览：总结所有类别的事项
+2. 重点关注：列出需要优先处理的事项
+3. 进度分析：分析当前的工作优先级
+4. 建议：给出合理的时间管理建议
+
+请用简洁、专业的语言进行汇总，帮助用户更好地理解和管理自己的待办事项。"""
+    
     response = client.chat.completions.create(
-        # 指定您创建的方舟推理接入点 ID，此处已帮您修改为您的推理接入点 ID
         model="doubao-seed-1-6-flash-250615",
         messages=[
             {
                 "role": "user",
                 "content": [
-                    {"type": "text", "text": "请帮我总结以下内容：\n" + text},
+                    {"type": "text", "text": prompt},
                 ],
             }
         ],
     )
-    return response.choices[0]
+    
+    # 验证响应
+    if not response.choices or not response.choices[0].message.content:
+        raise ValueError("LLM返回了空响应，请稍后重试")
+    
+    return response.choices[0].message.content
