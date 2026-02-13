@@ -10,17 +10,65 @@ client = Ark(
 )
 
 
-def summarize_text(text):
+def summarize_todos(todos_data):
+    """
+    使用LLM对待办事项进行智能汇总
+    
+    Args:
+        todos_data: 包含待办事项信息的字典
+    
+    Returns:
+        str: AI生成的汇总文本
+    """
+    # 构建用于汇总的文本
+    summary_parts = []
+    
+    # 汇总各个类别的待办事项
+    for category_name, category_data in todos_data.items():
+        category_display = {"today": "本日", "week": "本周", "month": "本月"}.get(category_name, category_name)
+        total = category_data.get('total', 0)
+        completed = category_data.get('completed', 0)
+        pending = total - completed
+        
+        summary_parts.append(f"\n【{category_display}待办】")
+        summary_parts.append(f"总计: {total}项, 已完成: {completed}项, 待完成: {pending}项")
+        
+        todos = category_data.get('todos', [])
+        if todos:
+            summary_parts.append("待办事项列表:")
+            for i, todo in enumerate(todos, 1):
+                status = "✓" if todo.get('completed', False) else "○"
+                title = todo.get('title', '无标题')
+                desc = todo.get('description', '')
+                desc_preview = f" - {desc[:30]}..." if desc and len(desc) > 30 else f" - {desc}" if desc else ""
+                summary_parts.append(f"  {status} {title}{desc_preview}")
+    
+    full_text = "\n".join(summary_parts)
+    
+    # 使用LLM进行智能汇总
+    prompt = f"""请作为一个专业的待办事项助手，对以下待办事项进行智能汇总分析。
+
+待办事项数据：
+{full_text}
+
+请提供：
+1. 整体概览：总结所有类别的完成情况
+2. 重点关注：列出需要优先处理的未完成事项
+3. 进度分析：分析当前的工作进度和完成率
+4. 建议：给出合理的时间管理建议
+
+请用简洁、专业的语言进行汇总，帮助用户更好地理解和管理自己的待办事项。"""
+    
     response = client.chat.completions.create(
-        # 指定您创建的方舟推理接入点 ID，此处已帮您修改为您的推理接入点 ID
         model="doubao-seed-1-6-flash-250615",
         messages=[
             {
                 "role": "user",
                 "content": [
-                    {"type": "text", "text": "请帮我总结以下内容：\n" + text},
+                    {"type": "text", "text": prompt},
                 ],
             }
         ],
     )
-    return response.choices[0]
+    
+    return response.choices[0].message.content

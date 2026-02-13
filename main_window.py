@@ -14,6 +14,7 @@ from PySide6.QtCore import Qt, QSize
 from PySide6.QtGui import QFont, QAction
 from datetime import datetime
 import json
+from llm import summarize_todos
 
 
 class TodoItemWidget(QWidget):
@@ -148,7 +149,7 @@ class MainWindow(QMainWindow):
         self.refresh_button.clicked.connect(self.refresh_all_lists)
         top_layout.addWidget(self.refresh_button)
         
-        self.export_button = QPushButton("导出")
+        self.export_button = QPushButton("AI汇总")
         self.export_button.clicked.connect(self.export_todos)
         top_layout.addWidget(self.export_button)
         
@@ -356,17 +357,28 @@ class MainWindow(QMainWindow):
                 self.refresh_all_lists()
     
     def export_todos(self):
-        """导出待办事项"""
+        """AI汇总待办事项"""
         file_path, _ = QFileDialog.getSaveFileName(
-            self, "导出待办事项", "todos_export.json",
-            "JSON Files (*.json);;Text Files (*.txt)"
+            self, "保存AI汇总", "todos_summary.txt",
+            "Text Files (*.txt);;Markdown Files (*.md)"
         )
         
         if file_path:
             try:
+                # 获取所有待办数据
                 export_data = self.model.export_all()
+                
+                # 使用LLM进行智能汇总
+                QMessageBox.information(self, "处理中", "正在使用AI生成汇总，请稍候...")
+                summary = summarize_todos(export_data)
+                
+                # 保存汇总结果
                 with open(file_path, 'w', encoding='utf-8') as f:
-                    json.dump(export_data, f, ensure_ascii=False, indent=2)
-                QMessageBox.information(self, "成功", f"待办事项已导出到:\n{file_path}")
+                    f.write("# TodoTips AI 智能汇总\n\n")
+                    f.write(f"生成时间: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n\n")
+                    f.write("---\n\n")
+                    f.write(summary)
+                
+                QMessageBox.information(self, "成功", f"AI汇总已保存到:\n{file_path}")
             except Exception as e:
-                QMessageBox.critical(self, "错误", f"导出失败: {str(e)}")
+                QMessageBox.critical(self, "错误", f"AI汇总失败: {str(e)}")
