@@ -19,23 +19,32 @@ class NotificationManager(QObject):
     
     def show_notification(self, title, message, play_sound=False):
         """显示系统通知"""
-        # 使用系统通知
-        if sys.platform == 'win32':
-            # Windows通知
-            try:
-                from win10toast import ToastNotifier
-                toaster = ToastNotifier()
-                toaster.show_toast(title, message, duration=5, threaded=True)
-            except ImportError:
-                # 如果win10toast不可用，使用QSystemTrayIcon
-                icon = QSystemTrayIcon.Information
-                QSystemTrayIcon.showMessage(None, title, message, icon, 5000)
-        elif sys.platform == 'darwin':
-            # macOS通知
-            os.system(f'''osascript -e 'display notification "{message}" with title "{title}"' ''')
-        else:
-            # Linux通知
-            os.system(f'notify-send "{title}" "{message}"')
+        # 使用系统通知 - 优先使用跨平台的PySide2方式
+        try:
+            # 尝试使用系统托盘图标显示通知（最可靠的跨平台方式）
+            if hasattr(self, 'tray_icon') and self.tray_icon:
+                self.tray_icon.showMessage(title, message, QSystemTrayIcon.Information, 5000)
+            elif sys.platform == 'win32':
+                # Windows通知
+                try:
+                    from win10toast import ToastNotifier
+                    toaster = ToastNotifier()
+                    toaster.show_toast(title, message, duration=5, threaded=True)
+                except ImportError:
+                    # 使用Windows命令行通知
+                    import subprocess
+                    subprocess.run([
+                        'powershell', '-Command',
+                        f'Add-Type -AssemblyName System.Windows.Forms; [System.Windows.Forms.MessageBox]::Show("{message}", "{title}")'
+                    ], shell=True, check=False)
+            elif sys.platform == 'darwin':
+                # macOS通知
+                os.system(f'''osascript -e 'display notification "{message}" with title "{title}"' ''')
+            else:
+                # Linux通知
+                os.system(f'notify-send "{title}" "{message}"')
+        except Exception as e:
+            print(f"显示通知失败: {e}")
         
         # 播放音效
         if play_sound and self.sound_enabled:

@@ -74,6 +74,9 @@ class TodoApplication:
         # 创建系统托盘
         self.create_tray_icon()
         
+        # 将托盘图标传递给通知管理器以实现跨平台通知
+        self.notification_manager.tray_icon = self.tray_icon
+        
         # 设置提醒回调
         self.reminder_manager.reminder_triggered.connect(self.on_reminder)
         
