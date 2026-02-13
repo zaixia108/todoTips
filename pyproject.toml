@@ -1,0 +1,11 @@
+[project]
+name = "todotips"
+version = "0.1.0"
+description = "Add your description here"
+requires-python = ">=3.11"
+dependencies = [
+    "keyboard>=0.13.5",
+    "nuitka>=4.0",
+    "pyperclip>=1.11.0",
+    "pyside6>=6.10.2",
+]
