@@ -37,8 +37,9 @@ class HotkeyWorker(QThread):
             keyboard.add_hotkey(self.quick_add_key, self.on_quick_add)
             keyboard.add_hotkey(self.show_window_key, self.on_show_window)
             
+            # 使用定期检查而不是无限等待，以便优雅退出
             while self.running:
-                keyboard.wait()
+                keyboard.wait(0.5)  # 等待0.5秒，允许检查running标志
         except Exception as e:
             print(f"快捷键监听错误: {e}")
     
@@ -55,8 +56,8 @@ class HotkeyWorker(QThread):
         self.running = False
         try:
             keyboard.unhook_all_hotkeys()
-        except:
-            pass
+        except Exception as e:
+            print(f"停止快捷键监听错误: {e}")
 
 
 class TodoApplication:

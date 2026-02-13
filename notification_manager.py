@@ -31,18 +31,25 @@ class NotificationManager(QObject):
                     toaster = ToastNotifier()
                     toaster.show_toast(title, message, duration=5, threaded=True)
                 except ImportError:
-                    # 使用Windows命令行通知
+                    # 使用Windows命令行通知 - 使用subprocess安全执行
                     import subprocess
-                    subprocess.run([
+                    # 转义特殊字符以防止注入
+                    safe_title = title.replace('"', '""').replace("'", "''")
+                    safe_message = message.replace('"', '""').replace("'", "''")
+                    cmd = [
                         'powershell', '-Command',
-                        f'Add-Type -AssemblyName System.Windows.Forms; [System.Windows.Forms.MessageBox]::Show("{message}", "{title}")'
-                    ], shell=True, check=False)
+                        f'Add-Type -AssemblyName System.Windows.Forms; [System.Windows.Forms.MessageBox]::Show("{safe_message}", "{safe_title}")'
+                    ]
+                    subprocess.run(cmd, shell=False, check=False, timeout=5)
             elif sys.platform == 'darwin':
-                # macOS通知
-                os.system(f'''osascript -e 'display notification "{message}" with title "{title}"' ''')
+                # macOS通知 - 使用subprocess安全执行
+                import subprocess
+                script = f'display notification "{message}" with title "{title}"'
+                subprocess.run(['osascript', '-e', script], check=False, timeout=5)
             else:
-                # Linux通知
-                os.system(f'notify-send "{title}" "{message}"')
+                # Linux通知 - 使用subprocess安全执行
+                import subprocess
+                subprocess.run(['notify-send', title, message], check=False, timeout=5)
         except Exception as e:
             print(f"显示通知失败: {e}")
         
@@ -58,10 +65,18 @@ class NotificationManager(QObject):
                 import winsound
                 winsound.MessageBeep(winsound.MB_ICONASTERISK)
             elif sys.platform == 'darwin':
-                os.system('afplay /System/Library/Sounds/Glass.aiff')
+                import subprocess
+                subprocess.run(['afplay', '/System/Library/Sounds/Glass.aiff'], 
+                              check=False, timeout=5)
             else:
-                # Linux使用beep或paplay
-                os.system('paplay /usr/share/sounds/freedesktop/stereo/message.oga 2>/dev/null || beep')
+                # Linux使用paplay或beep
+                import subprocess
+                # 尝试paplay，失败则尝试beep
+                try:
+                    subprocess.run(['paplay', '/usr/share/sounds/freedesktop/stereo/message.oga'],
+                                  check=False, timeout=5)
+                except (subprocess.SubprocessError, FileNotFoundError):
+                    subprocess.run(['beep'], check=False, timeout=5)
         except Exception as e:
             print(f"播放音效错误: {e}")
     

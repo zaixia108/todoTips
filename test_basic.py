@@ -163,20 +163,20 @@ def test_dependencies():
         else:
             print(f"  ✗ PySide2 未安装")
             all_ok = False
-    except:
-        print(f"  ✗ PySide2 未安装")
+    except Exception as e:
+        print(f"  ✗ PySide2 检查失败: {e}")
         all_ok = False
     
-    # keyboard可能需要root权限，标记为可选
+    # keyboard可能需要root权限, 标记为可选
     try:
         import importlib.util
         spec = importlib.util.find_spec('keyboard')
         if spec is not None:
             print(f"  ✓ keyboard 已安装")
         else:
-            print(f"  ⚠ keyboard 未安装 (可选，快捷键功能需要)")
-    except:
-        print(f"  ⚠ keyboard 未安装 (可选，快捷键功能需要)")
+            print(f"  ⚠ keyboard 未安装 (可选, 快捷键功能需要)")
+    except Exception as e:
+        print(f"  ⚠ keyboard 检查失败: {e} (可选, 快捷键功能需要)")
     
     if all_ok:
         print("\n✓ 核心依赖包已安装!")
