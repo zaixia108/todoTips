@@ -16,6 +16,7 @@ from datetime import datetime
 import json
 import tempfile
 import os
+import html
 from llm import summarize_todos
 
 
@@ -127,9 +128,19 @@ class SummaryDialog(QDialog):
     def __init__(self, summary_text, parent=None):
         super().__init__(parent)
         self.summary_text = summary_text
+        self.temp_html_file = None  # 跟踪临时文件用于清理
         self.setWindowTitle("TodoTips AI 智能汇总")
         self.setMinimumSize(700, 500)
         self.setup_ui()
+    
+    def closeEvent(self, event):
+        """关闭对话框时清理临时文件"""
+        if self.temp_html_file and os.path.exists(self.temp_html_file):
+            try:
+                os.unlink(self.temp_html_file)
+            except Exception:
+                pass  # 忽略清理失败
+        super().closeEvent(event)
     
     def setup_ui(self):
         """设置UI"""
@@ -248,9 +259,15 @@ class SummaryDialog(QDialog):
                 f.write(html_content)
                 temp_path = f.name
             
+            # 保存临时文件路径用于清理
+            self.temp_html_file = temp_path
+            
             # 在浏览器中打开
-            QDesktopServices.openUrl(QUrl.fromLocalFile(temp_path))
-            QMessageBox.information(self, "成功", "已在浏览器中打开AI汇总")
+            success = QDesktopServices.openUrl(QUrl.fromLocalFile(temp_path))
+            if success:
+                QMessageBox.information(self, "成功", "已在浏览器中打开AI汇总")
+            else:
+                QMessageBox.warning(self, "警告", "无法打开默认浏览器，请手动打开文件:\n" + temp_path)
             
         except Exception as e:
             QMessageBox.critical(self, "错误", f"打开浏览器失败: {str(e)}")
@@ -258,7 +275,6 @@ class SummaryDialog(QDialog):
     def _format_html_content(self, text):
         """格式化HTML内容"""
         # 简单的文本转HTML，保留换行和段落
-        import html
         escaped = html.escape(text)
         # 将连续的换行转换为段落分隔
         escaped = escaped.replace('\n\n', '</p><p class="section">')
