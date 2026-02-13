@@ -8,4 +8,5 @@ dependencies = [
     "nuitka>=4.0",
     "pyperclip>=1.11.0",
     "pyside6>=6.10.2",
+    "volcengine-python-sdk[ark]>=5.0.9",
 ]
