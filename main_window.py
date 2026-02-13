@@ -369,7 +369,6 @@ class MainWindow(QMainWindow):
                 export_data = self.model.export_all()
                 
                 # 使用LLM进行智能汇总
-                QMessageBox.information(self, "处理中", "正在使用AI生成汇总，请稍候...")
                 summary = summarize_todos(export_data)
                 
                 # 保存汇总结果

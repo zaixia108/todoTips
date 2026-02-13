@@ -9,6 +9,14 @@ client = Ark(
     api_key='e4c8d350-ce4d-46e9-9396-8a1a1dcdbb7a',
 )
 
+# 常量定义
+CATEGORY_DISPLAY_NAMES = {
+    "today": "本日",
+    "week": "本周",
+    "month": "本月"
+}
+MAX_DESC_PREVIEW_LENGTH = 30
+
 
 def summarize_todos(todos_data):
     """
@@ -19,13 +27,16 @@ def summarize_todos(todos_data):
     
     Returns:
         str: AI生成的汇总文本
+    
+    Raises:
+        ValueError: 当LLM返回无效响应时
     """
     # 构建用于汇总的文本
     summary_parts = []
     
     # 汇总各个类别的待办事项
     for category_name, category_data in todos_data.items():
-        category_display = {"today": "本日", "week": "本周", "month": "本月"}.get(category_name, category_name)
+        category_display = CATEGORY_DISPLAY_NAMES.get(category_name, category_name)
         total = category_data.get('total', 0)
         completed = category_data.get('completed', 0)
         pending = total - completed
@@ -40,7 +51,12 @@ def summarize_todos(todos_data):
                 status = "✓" if todo.get('completed', False) else "○"
                 title = todo.get('title', '无标题')
                 desc = todo.get('description', '')
-                desc_preview = f" - {desc[:30]}..." if desc and len(desc) > 30 else f" - {desc}" if desc else ""
+                if desc and len(desc) > MAX_DESC_PREVIEW_LENGTH:
+                    desc_preview = f" - {desc[:MAX_DESC_PREVIEW_LENGTH]}..."
+                elif desc:
+                    desc_preview = f" - {desc}"
+                else:
+                    desc_preview = ""
                 summary_parts.append(f"  {status} {title}{desc_preview}")
     
     full_text = "\n".join(summary_parts)
@@ -70,5 +86,9 @@ def summarize_todos(todos_data):
             }
         ],
     )
+    
+    # 验证响应
+    if not response.choices or not response.choices[0].message.content:
+        raise ValueError("LLM返回了空响应，请稍后重试")
     
     return response.choices[0].message.content
